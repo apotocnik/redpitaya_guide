@@ -9,7 +9,7 @@
 # by Anton Potocnik, 02.10.2016
 # ==================================================================================================
 
-set project_name "rfid_ddc"
+set project_name "led_blinker"
 
 set part_name "xc7z010clg400-1"
 
