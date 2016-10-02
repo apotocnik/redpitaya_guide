@@ -3,12 +3,14 @@ set project_name [lindex $argv 0]
 
 set part_name [lindex $argv 1]
 
+# * rm .sim added by AP 
 file delete -force tmp/$project_name.cache tmp/$project_name.hw tmp/$project_name.srcs tmp/$project_name.runs tmp/$project_name.xpr  tmp/$project_name.sim
 
 create_project -part $part_name $project_name tmp
 
 set_property IP_REPO_PATHS tmp/cores [current_project]
 
+# added by AP
 update_ip_catalog
 
 set bd_path tmp/$project_name.srcs/sources_1/bd/system
