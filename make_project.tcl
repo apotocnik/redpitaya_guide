@@ -6,14 +6,11 @@
 #
 # Make sure the script is run from the red-pitaya-notes-master/ folder
 #
-# by Anton Potocnik, 02.10.2016
+# by Anton Potocnik, 02.10.2016 - 05.10.2016
 # ==================================================================================================
 
-set project_name "led_blinker"
+set project_name "1_led_blink"
+#set project_name "2_knight_rider"
 
-set part_name "xc7z010clg400-1"
-
-set argv "$project_name $part_name"
-
-source scripts/project.tcl
+source projects/$project_name/block_design.tcl
 
