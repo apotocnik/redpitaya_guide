@@ -11,6 +11,7 @@
 
 set project_name "1_led_blink"
 #set project_name "2_knight_rider"
+#set project_name "3_timing_knight_rider"
 
 source projects/$project_name/block_design.tcl
 

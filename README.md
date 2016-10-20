@@ -1,6 +1,8 @@
 # redpitaya_guide
 Collections of guides and projects related to testing RedPitaya
 
+More information at http://antonpotocnik.com/?cat=29
+
 
 Projects:
 

@@ -1,5 +1,5 @@
 # ==================================================================================================
-# block_design.tcl - Create Vivado Project - 2_knight_rider
+# block_design.tcl - Create Vivado Project - 3_timing_knight_rider
 #
 # This script should be run from the base redpitaya-guides/ folder inside Vivado tcl console.
 #
@@ -55,35 +55,32 @@ set_property -dict [list CONFIG.C_SIZE {2}] [get_bd_cells util_ds_buf_2]
 set_property -dict [list CONFIG.C_BUF_TYPE {OBUFDS}] [get_bd_cells util_ds_buf_2]
 endgroup
 
-# binary counter
+
+# Define all 8 LEDs
+set_property LEFT 7 [get_bd_ports led_o]
+
+
+# RTL module - knight_rider
+startgroup
+create_bd_cell -type module -reference knight_rider knight_rider_0
+endgroup
+
+# RTL module - Selector
+startgroup
+create_bd_cell -type module -reference selector selector_0
+endgroup
+
+# Binary Counter - 32bit
 startgroup
 create_bd_cell -type ip -vlnv xilinx.com:ip:c_counter_binary:12.0 c_counter_binary_0
 set_property -dict [list CONFIG.Output_Width {32}] [get_bd_cells c_counter_binary_0]
 endgroup
 
-# slice
+# AXI GPIO IP core
 startgroup
-create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 xlslice_0
-set_property -dict [list CONFIG.DIN_TO {23} CONFIG.DIN_FROM {23} CONFIG.DIN_WITDH {32} CONFIG.DOUT_WIDTH {1}] [get_bd_cells xlslice_0]
+create_bd_cell -type ip -vlnv xilinx.com:ip:axi_gpio:2.0 axi_gpio_0
 endgroup
 
-# We will use only one LED
-set_property LEFT 7 [get_bd_ports led_o]
-
-# Add two rtl modules - knight_rider
-startgroup
-create_bd_cell -type module -reference knight_rider knight_rider_0
-create_bd_cell -type module -reference knight_rider knight_rider_1
-set_property -dict [list CONFIG.leds_init {"0000000011"} CONFIG.dir_init {0}] [get_bd_cells knight_rider_0]
-set_property -dict [list CONFIG.leds_init {"1100000000"} CONFIG.dir_init {1}] [get_bd_cells knight_rider_1]
-endgroup
-
-
-# Add vector OR IP to join two knight rider module outputs
-startgroup
-create_bd_cell -type ip -vlnv xilinx.com:ip:util_vector_logic:2.0 util_vector_logic_0
-set_property -dict [list CONFIG.C_OPERATION {or} CONFIG.LOGO_FILE {data/sym_orgate.png}] [get_bd_cells util_vector_logic_0]
-endgroup
 
 # ====================================================================================
 # Connections 
@@ -94,21 +91,22 @@ connect_bd_net [get_bd_ports daisy_p_i] [get_bd_pins util_ds_buf_1/IBUF_DS_P]
 connect_bd_net [get_bd_ports daisy_n_i] [get_bd_pins util_ds_buf_1/IBUF_DS_N]
 connect_bd_net [get_bd_ports daisy_p_o] [get_bd_pins util_ds_buf_2/OBUF_DS_P]
 connect_bd_net [get_bd_ports daisy_n_o] [get_bd_pins util_ds_buf_2/OBUF_DS_N]
-connect_bd_net [get_bd_pins util_ds_buf_1/IBUF_OUT] [get_bd_pins util_ds_buf_2/OBUF_IN]
-
 apply_bd_automation -rule xilinx.com:bd_rule:processing_system7 -config {make_external "FIXED_IO, DDR" Master "Disable" Slave "Disable" }  [get_bd_cells processing_system7_0]
 connect_bd_net [get_bd_pins processing_system7_0/M_AXI_GP0_ACLK] [get_bd_pins processing_system7_0/FCLK_CLK0]
 connect_bd_net [get_bd_pins processing_system7_0/S_AXI_HP0_ACLK] [get_bd_pins processing_system7_0/FCLK_CLK0]
-connect_bd_net [get_bd_pins c_counter_binary_0/Q] [get_bd_pins xlslice_0/Din]
+
 connect_bd_net [get_bd_pins processing_system7_0/FCLK_CLK0] [get_bd_pins c_counter_binary_0/CLK]
+connect_bd_net [get_bd_ports led_o] [get_bd_pins knight_rider_0/led_out]
+connect_bd_net [get_bd_pins c_counter_binary_0/Q] [get_bd_pins selector_0/A]
+connect_bd_net [get_bd_pins axi_gpio_0/gpio_io_o] [get_bd_pins selector_0/div]
+connect_bd_net [get_bd_pins selector_0/S] [get_bd_pins knight_rider_0/clk]
+
+apply_bd_automation -rule xilinx.com:bd_rule:axi4 -config {Master "/processing_system7_0/M_AXI_GP0" Clk "Auto" }  [get_bd_intf_pins axi_gpio_0/S_AXI]
+
+connect_bd_net [get_bd_pins axi_gpio_0/gpio_io_i] [get_bd_pins axi_gpio_0/gpio_io_o]
 
 
-connect_bd_net [get_bd_pins xlslice_0/Dout] [get_bd_pins knight_rider_0/clk]
-connect_bd_net [get_bd_pins knight_rider_0/led_out] [get_bd_pins util_vector_logic_0/Op1]
-connect_bd_net [get_bd_pins knight_rider_1/led_out] [get_bd_pins util_vector_logic_0/Op2]
-connect_bd_net [get_bd_pins knight_rider_1/clk] [get_bd_pins xlslice_0/Dout]
-connect_bd_net [get_bd_ports led_o] [get_bd_pins util_vector_logic_0/Res]
-
+set_property offset 0x40000000 [get_bd_addr_segs {processing_system7_0/Data/SEG_axi_gpio_0_Reg}]
 
 # ====================================================================================
 # Generate output products and wrapper, add constraint 
@@ -124,6 +122,8 @@ set files [glob -nocomplain cfg/*.xdc]
 if {[llength $files] > 0} {
   add_files -norecurse -fileset constrs_1 $files
 }
+
+#set_property top system_wrapper [current_fileset]
 
 set_property VERILOG_DEFINE {TOOL_VIVADO} [current_fileset]
 set_property STRATEGY Flow_PerfOptimized_High [get_runs synth_1]
