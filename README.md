@@ -1,15 +1,17 @@
 # redpitaya_guide
-Collections of guides and projects related to testing RedPitaya
+Collections of guides and projects related to testing Red Pitaya
 
 More information at http://antonpotocnik.com/?cat=29
 
 
 Projects:
 
-	1 LED blink (Installation, Generating Bitstream, uploading to fpga)
+	1 LED blink (Installation, Generating Bitstream, uploading to FPGA)
 
 	2 Kinght Rider (Verilog example, modules, parallelism)
-
+	
+	3 Stopwatch (AXI protocol, communication between FPGA and Linux on the ARM porcessor, GPIO IP core)
+	
 	
 Start a project in Vivado using following steps:
 
