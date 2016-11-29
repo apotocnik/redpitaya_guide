@@ -6,12 +6,12 @@
 #
 # Make sure the script is run from the red-pitaya-notes-master/ folder
 #
-# by Anton Potocnik, 02.10.2016 - 05.10.2016
+# by Anton Potocnik, 02.10.2016 - 29.11.2016
 # ==================================================================================================
 
 set project_name "1_led_blink"
 #set project_name "2_knight_rider"
-#set project_name "3_timing_knight_rider"
-
+#set project_name "3_stopwatch"
+#set project_name "4_averager"
 source projects/$project_name/block_design.tcl
 

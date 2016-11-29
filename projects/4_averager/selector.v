@@ -22,14 +22,15 @@
 
 module selector(
     input [31:0] A,
-    input [31:0] div,
+    input [7:0] div,
     output reg S
 );
 
-    parameter reg [31:0] slice_pos = 26; // Slice bit position 26 ... 0.94 s
+    parameter integer offset = 25; // Slice bit position 25 ... 0.94 s
+    parameter integer scale = -1; 
 
     always @(A,div) begin
-        S <= A[slice_pos - 1 - div];
+        S = A[offset + scale*div];
     end
     
 endmodule

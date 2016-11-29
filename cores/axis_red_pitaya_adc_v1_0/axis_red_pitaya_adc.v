@@ -25,9 +25,11 @@ module axis_red_pitaya_adc #
 
   reg  [ADC_DATA_WIDTH-1:0] int_dat_a_reg;
   reg  [ADC_DATA_WIDTH-1:0] int_dat_b_reg;
-  wire                      int_clk;
+  wire                      int_clk0;
+  wire 						int_clk;
 
-  IBUFGDS adc_clk_inst (.I(adc_clk_p), .IB(adc_clk_n), .O(int_clk));
+  IBUFGDS adc_clk_inst0 (.I(adc_clk_p), .IB(adc_clk_n), .O(int_clk0));
+  BUFG adc_clk_inst (.I(int_clk0), .O(int_clk));
 
   always @(posedge int_clk)
   begin
