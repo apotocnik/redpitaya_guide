@@ -12,6 +12,9 @@ Projects:
 	
 	3 Stopwatch (AXI protocol, communication between FPGA and Linux on the ARM porcessor, GPIO IP core)
 	
+	4 Averager (ADC, DAC, Setting Configuration, Reading Data from FPGA, plotting data on a client machine, IP cores)
+	
+	
 	
 Start a project in Vivado using following steps:
 

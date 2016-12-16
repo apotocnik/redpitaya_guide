@@ -1,3 +1,11 @@
+/*
+FPGA Project: Averager
+Server for setting configuration and reading data from FPGA
+
+16.12.2016 by Anton Potocnik
+Modified Pavel Demin's server.c
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -12,15 +20,12 @@
 #include <time.h>
 
 
-//#define NAVERAGES 0
-//#define NSAMPLES 8
-//#define TIMING 20
 #define START 0
 #define STOP 1
 
 int main(int argc, char *argv[])
 {
-  int fd, i, j, sock_server, sock_client, size, yes = 1, nsmpl, navg, rx;
+  int fd, j, sock_server, sock_client, size, yes = 1, nsmpl, navg, rx;
   void *cfg, *dat;
   char *name = "/dev/mem";
   uint32_t naverages=0, nsamples=0, timing=0;
@@ -84,71 +89,54 @@ int main(int argc, char *argv[])
       }
       if(rx > 0) {
          value = command & 0xfffffff;
-         //printf("Received: %x\n",command);
          switch(command >> 28)
          {
            case 1: /* Trigger Delay - Timing */
-             timing = command & 0xff;
-             //printf("Timing: %d\n", timing);
-             break;
+				timing = command & 0xff;
+				break;
 
            case 2: /* NSAMPLES */
-	     if ((command & 0xff) < 14)
-              	nsamples = (command & 0xff);
-	     else
-		nsamples = 13;
-	     //printf("NSAMPLES: %d\n", nsamples);
-             break;
+				if ((command & 0xff) < 14)
+					nsamples = (command & 0xff);
+				else
+				nsamples = 13;
+				break;
 
            case 3: /* NAVERAGES */
-             naverages = command & 0xff;
-	     //printf("NAVERAGES: %d\n", naverages);
-             break;
-
+				naverages = command & 0xff;
+				break;
 
            case 0: /* fire */
-             time_begin = clock();
-             // set trigger and NSAMPLES set NAVERAGES and stop measurement
-	     *((int32_t *)(cfg + 0)) = (STOP) + (timing<<8) + (nsamples<<16) + (naverages<<24);
+             
+				// set trigger and NSAMPLES set NAVERAGES and stop measurement
+				*((int32_t *)(cfg + 0)) = (STOP) + (timing<<8) + (nsamples<<16) + (naverages<<24);
 
-	     //sleep(0.1); // wait 0.1 second
+				//sleep(0.1); // wait 0.1 second
 
-             // start measurement
-	     *((int32_t *)(cfg + 0)) ^= 1;
-	     measuring = 1;
-             break;
+				time_begin = clock();
+				// start measurement
+				*((int32_t *)(cfg + 0)) ^= 1;
+				measuring = 1;
+				break;
          }
       }
 
 
-
-      /* Check if it is measuring and has finished */
+      /* Check if it is in measuring mode and has finished */
       if (measuring == 1 && (*((uint32_t *)(cfg + 8)) & 1) != 0) { 
-
-      	// measure time
-      	time_spent = ((double)(clock() - time_begin)) / CLOCKS_PER_SEC;
+      	time_spent = ((double)(clock() - time_begin)) / CLOCKS_PER_SEC; // measure time
 
       	/* transfer all samples */
-	i = 0;
       	nsmpl = (1<<nsamples);
-	navg = ((1<<naverages)-1) % nsmpl;
-      	for(j = navg; j < nsmpl; ++j) {
-	    buffer[i] = (*((uint32_t *)(dat + 4*j)));
-	    //printf("%d\t %d\n",i,tmp);
-	    i++;
-      	}
-      	for(j = 0; j < navg; ++j) {
-	    buffer[i] = (*((uint32_t *)(dat + 4*j)));
-	    //printf("%d\t %d\n",i,tmp);
-	    i++;
-      	}
+      	for(j = 0; j < nsmpl; ++j) 
+			buffer[j] = (*((uint32_t *)(dat + 4*j)));
+      	
 
       	send(sock_client, buffer, 4*nsmpl, MSG_NOSIGNAL);
       	printf("%d samples measured in %f s\n", nsmpl, time_spent);
-	measuring = 0;
-	break;
+		measuring = 0;
+		break;
       }
-
     }	
 
     close(sock_client);

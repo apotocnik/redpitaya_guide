@@ -7,7 +7,7 @@ set elements [split $core_name _]
 set project_name [join [lrange $elements 0 end-2] _]
 set version [string trimleft [join [lrange $elements end-1 end] .] v]
 
-file delete -force tmp/cores/$core_name tmp/cores/$project_name.cache tmp/cores/$project_name.hw tmp/cores/$project_name.xpr
+file delete -force tmp/cores/$core_name tmp/cores/$project_name.cache tmp/cores/$project_name.hw tmp/cores/$project_name.xpr tmp/cores/$project_name.sim
 
 create_project -part $part_name $project_name tmp/cores
 
@@ -20,9 +20,6 @@ set core [ipx::current_core]
 set_property VERSION $version $core
 set_property NAME $project_name $core
 set_property LIBRARY {user} $core
-set_property VENDOR {pavel-demin} $core
-set_property VENDOR_DISPLAY_NAME {Pavel Demin} $core
-set_property COMPANY_URL {https://github.com/pavel-demin/red-pitaya-notes} $core
 set_property SUPPORTED_FAMILIES {zynq Production} $core
 
 proc core_parameter {name display_name description} {
