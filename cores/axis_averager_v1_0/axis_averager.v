@@ -65,8 +65,6 @@ module axis_averager #
   assign bram_porta_clk = aclk;
   assign bram_porta_rst = ~aresetn;
   assign bram_porta_addr = int_addrA_reg;
-  //assign bram_porta_wrdata = int_case_reg == 1 ? 0 : bram_portb_rddata + int_addrA_reg;
-  //assign bram_porta_wrdata = int_case_reg == 1 ? 0 : bram_portb_rddata + s_axis_tdata;
   assign bram_porta_wrdata = int_data_reg;
   assign bram_porta_we = int_wren_reg;
    
