@@ -1,6 +1,6 @@
 
 # ==================================================================================================
-# block_design.tcl - Create Vivado Project - 4_averager
+# block_design.tcl - Create Vivado Project - 5_averager
 #
 # This script should be run from the base redpitaya-guides/ folder inside Vivado tcl console.
 #

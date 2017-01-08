@@ -10,9 +10,11 @@ Projects:
 
 	2 Kinght Rider (Verilog example, modules, parallelism)
 	
-	3 Stopwatch (AXI protocol, communication between FPGA and Linux on the ARM porcessor, GPIO IP core)
+	3 Stopwatch (AXI protocol, communication between FPGA and Linux on the ARM porcessor, GPIO IP core, RTL modules)
+
+	4 Frequency Counter (ADC, DAC, communication between FPGA and Linux on the ARM porcessor)
 	
-	4 Averager (ADC, DAC, Setting Configuration, Reading Data from FPGA, plotting data on a client machine, IP cores)
+	5 Averager (ADC, DAC, Reading Data from FPGA, plotting data on a client machine, IP cores)
 	
 	
 	

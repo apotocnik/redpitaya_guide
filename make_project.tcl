@@ -6,13 +6,13 @@
 #
 # Make sure the script is executed from redpitaya_guide/ folder
 #
-# by Anton Potocnik, 02.10.2016 - 16.12.2016
+# by Anton Potocnik, 02.10.2016 - 08.01.2017
 # ==================================================================================================
 
 set project_name "1_led_blink"
 #set project_name "2_knight_rider"
 #set project_name "3_stopwatch"
-#set project_name "4_averager"
+#set project_name "4_frequency_counter"
+#set project_name "5_averager"
 
 source projects/$project_name/block_design.tcl
-
