@@ -23,19 +23,13 @@ set_property -dict [list CONFIG.C_ALL_INPUTS {1} CONFIG.C_ALL_INPUTS_2 {0}] [get
 # xlslices
 startgroup
 # slice_trigger
-create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 xls_trigger
-set_property -dict [list CONFIG.DIN_TO {0} CONFIG.DIN_FROM {4}] [get_bd_cells xls_trigger]
+create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 xls_log2Ncycles
+set_property -dict [list CONFIG.DIN_TO {0} CONFIG.DIN_FROM {4}] [get_bd_cells xls_log2Ncycles]
 # slice_phase
 create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 xls_phase
 set_property -dict [list CONFIG.DIN_TO {5} CONFIG.DIN_FROM {31}] [get_bd_cells xls_phase]
 endgroup
 
-
-# Binary Counter - 32bit
-startgroup
-create_bd_cell -type ip -vlnv xilinx.com:ip:c_counter_binary:12.0 c_counter_binary_0
-set_property -dict [list CONFIG.Output_Width {32}] [get_bd_cells c_counter_binary_0]
-endgroup
 
 
 # Constant for AXIS aresetn
@@ -57,8 +51,8 @@ create_bd_cell -type ip -vlnv pavel-demin:user:axis_constant:1.0 axis_constant_0
 # signal split
 create_bd_cell -type module -reference signal_split signal_split_0
 
-# selector for the trigger
-create_bd_cell -type module -reference selector selector_0
+# pow2 module
+create_bd_cell -type module -reference pow2 pos2_0
 
 # signal_decoder
 create_bd_cell -type module -reference signal_decoder signal_decoder_0
@@ -84,17 +78,13 @@ connect_bd_net [get_bd_ports led_o] [get_bd_pins signal_decoder_0/led_out]
 connect_bd_intf_net [get_bd_intf_pins frequency_counter_0/S_AXIS_IN] [get_bd_intf_pins signal_split_0/M_AXIS_PORT1]
 connect_bd_net [get_bd_pins frequency_counter_0/clk] [get_bd_pins axis_red_pitaya_adc_0/adc_clk]
 connect_bd_net [get_bd_pins frequency_counter_0/rst] [get_bd_pins xlc_reset/dout]
-connect_bd_net [get_bd_pins selector_0/S] [get_bd_pins frequency_counter_0/trigger]
+connect_bd_net [get_bd_pins pos2_0/N] [get_bd_pins frequency_counter_0/Ncycles]
+connect_bd_net [get_bd_pins xls_log2Ncycles/Dout] [get_bd_pins pos2_0/log2N]
 
 # to GPIO
 connect_bd_net [get_bd_pins frequency_counter_0/counter_output] [get_bd_pins axi_gpio_0/gpio_io_i]
 connect_bd_net [get_bd_pins axi_gpio_0/gpio2_io_i] [get_bd_pins axi_gpio_0/gpio2_io_o]
-
-# Trigger
-connect_bd_net [get_bd_pins c_counter_binary_0/CLK] [get_bd_pins axis_red_pitaya_adc_0/adc_clk]
-connect_bd_net [get_bd_pins c_counter_binary_0/Q] [get_bd_pins selector_0/A]
-connect_bd_net [get_bd_pins xls_trigger/Dout] [get_bd_pins selector_0/div]
-connect_bd_net [get_bd_pins xls_trigger/Din] [get_bd_pins axi_gpio_0/gpio2_io_o]
+connect_bd_net [get_bd_pins xls_log2Ncycles/Din] [get_bd_pins axi_gpio_0/gpio2_io_o]
 
 
 # DDS compiler
@@ -112,7 +102,9 @@ connect_bd_net [get_bd_pins xls_phase/Din] [get_bd_pins axi_gpio_0/gpio2_io_o]
 
 group_bd_cells SignalGenerator [get_bd_cells axis_red_pitaya_dac_0] [get_bd_cells dds_compiler_0] [get_bd_cells clk_wiz_0] [get_bd_cells axis_constant_0] [get_bd_cells xls_phase]
 
-group_bd_cells Trigger [get_bd_cells selector_0] [get_bd_cells c_counter_binary_0] [get_bd_cells xls_trigger]
+group_bd_cells DataAcquisition [get_bd_cells axis_red_pitaya_adc_0] [get_bd_cells signal_split_0]
+
+group_bd_cells FrequencyCounter [get_bd_cells xls_log2Ncycles] [get_bd_cells pos2_0] [get_bd_cells frequency_counter_0]
 
 group_bd_cells PS7 [get_bd_cells processing_system7_0] [get_bd_cells rst_ps7_0_125M] [get_bd_cells ps7_0_axi_periph]
 

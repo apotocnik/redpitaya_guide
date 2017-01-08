@@ -22,7 +22,7 @@
 module freq_count_sim();
 
 reg clk = 0;
-reg trigger = 0;
+reg [31:0] Ncycles = 2;
 reg [31:0] data_in = 0;  
 wire [31:0] out;
 wire [31:0] data_out;
@@ -32,7 +32,7 @@ frequency_counter fc (.S_AXIS_IN_tdata(data_in),
                       .S_AXIS_IN_tvalid(1'b1),
                       .clk(clk),
                       .rst(1'b1),
-                      .trigger(trigger),
+                      .Ncycles(Ncycles),
                       .M_AXIS_OUT_tdata(data_out),
                       .M_AXIS_OUT_tvalid(valid_out),
                       .counter_output(out)
@@ -43,10 +43,6 @@ initial begin
     forever #1 clk = ~clk;
 end
 
-initial begin
-    trigger = 0;
-    forever #50 trigger = ~trigger;
-end
 
 
 //declare the sine ROM - 30 registers each 8 bit wide.  

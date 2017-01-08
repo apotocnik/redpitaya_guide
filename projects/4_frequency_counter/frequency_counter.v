@@ -9,12 +9,12 @@
 // Project Name: 
 // Target Devices: 
 // Tool Versions: 
-// Description: 
+// Description:  Reciprotial method 
 // 
 // Dependencies: 
 // 
 // Revision:
-// Revision 0.01 - File Created
+// Revision 0.1 - Reciprotial method implemented
 // Additional Comments:
 // 
 //////////////////////////////////////////////////////////////////////////////////
@@ -34,32 +34,37 @@ module frequency_counter #
     input                          S_AXIS_IN_tvalid,
     input                          clk,
     input                          rst,
-    input                          trigger,
+    input [COUNT_WIDTH-1:0]        Ncycles,
     output [AXIS_TDATA_WIDTH-1:0]  M_AXIS_OUT_tdata,
     output                         M_AXIS_OUT_tvalid,
-	output reg [COUNT_WIDTH-1:0]   counter_output
+	output [COUNT_WIDTH-1:0]       counter_output
 );
+    
     wire signed [ADC_WIDTH-1:0]    data;
-    reg                            state, state_next, trigger_d;
-    wire                           trig;
-    reg [COUNT_WIDTH-1:0]          counter=0, counter_next, counter_output_next;
-    reg [COUNT_WIDTH-1:0]          counter_output = 0;
+    reg                            state, state_next;
+    reg [COUNT_WIDTH-1:0]          counter=0, counter_next=0;
+    reg [COUNT_WIDTH-1:0]          counter_output=0, counter_output_next=0;
+    reg [COUNT_WIDTH-1:0]          cycle=0, cycle_next=0;
+    
     
     // Wire AXIS IN to AXIS OUT
     assign  M_AXIS_OUT_tdata[ADC_WIDTH-1:0] = S_AXIS_IN_tdata[ADC_WIDTH-1:0];
     assign  M_AXIS_OUT_tvalid = S_AXIS_IN_tvalid;
     
-    // extract only the 14-bits of ADC data 
+    // Extract only the 14-bits of ADC data 
     assign  data = S_AXIS_IN_tdata[ADC_WIDTH-1:0];
  
     
-    always @(posedge clk) // handling of state buffer
+    
+    // Handling of the state buffer for finding signal transition at the threshold
+    always @(posedge clk) 
     begin
         if (~rst) 
             state <= 1'b0;
         else
             state <= state_next;
     end
+    
     
     always @*            // logic for state buffer
     begin
@@ -71,42 +76,42 @@ module frequency_counter #
             state_next = state;
     end
     
-    
-    
-    always @(posedge clk) // handling of trigger.
-        trigger_d <= trigger; // trigger_d is trigger delayed by one clk cycle
-    
-    assign trig = (trigger == 1 && trigger_d == 0) ? 1 : 0;  //Get a pulse on posedge trigger change
-    //assign trig = 0;
 
 
-    always @(posedge clk) // handling of counter and counter_output buffer
+
+    // Handling of counter, counter_output and cycle buffer
+    always @(posedge clk) 
     begin
         if (~rst) 
         begin
             counter <= 0;
             counter_output <= 0;
+            cycle <= 0;
         end
         else
         begin
             counter <= counter_next;
             counter_output <= counter_output_next;
+            cycle <= cycle_next;
         end
     end
 
 
-    always @* // logic for counter and counter_output buffer
+    always @* // logic for counter, counter_output, and cycle buffer
     begin
-        counter_next = counter;
+        counter_next = counter + 1; // increment on each clock cycle
         counter_output_next = counter_output;
+        cycle_next = cycle;
         
-        if (state < state_next)
-            counter_next = counter + 1;
-            
-        if (trig == 1'b1) 
+        if (state < state_next) // high to low signal transition
         begin
-            counter_next = 0;
-            counter_output_next = counter;
+            cycle_next = cycle + 1; // increment on each signal transition
+            if (cycle >= Ncycles-1) 
+            begin
+                counter_next = 0;
+                counter_output_next = counter;
+                cycle_next = 0;
+            end
         end
    end
 

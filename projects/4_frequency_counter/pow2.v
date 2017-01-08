@@ -1,11 +1,11 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
 // Company: 
-// Engineer: 
+// Engineer: Anton Potocnik
 // 
-// Create Date: 08.10.2016 22:09:33
+// Create Date: 19.11.2016 13:15:28
 // Design Name: 
-// Module Name: selector
+// Module Name: pow2
 // Project Name: 
 // Target Devices: 
 // Tool Versions: 
@@ -20,21 +20,16 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module selector #
+module pow2 # 
 (
-    parameter A_WIDTH = 32,
-    parameter DIV_WIDTH = 5,
-    parameter offset = 26, // Slice bit position 26 ... 1.07 s
-    parameter scale = -1 
+	parameter LOG2N_WIDTH = 5,
+	parameter N_WIDTH = 32
 )
 (
-    input [A_WIDTH-1:0] A,
-    input [DIV_WIDTH-1:0] div,
-    output reg S
+    input unsigned [LOG2N_WIDTH-1:0]  log2N,
+    output unsigned [N_WIDTH-1:0]	  N
 );
-
-    always @(A,div) begin
-        S = A[offset + scale*div];
-    end
-    
+	
+    assign N = (1<<log2N);
+	
 endmodule

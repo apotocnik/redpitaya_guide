@@ -8,28 +8,27 @@
 int main(int argc, char **argv)
 {
   int fd;
-  int log2_trig;
+  int log2_Ncycles;
   uint32_t phase_inc;
   double phase_in;
   uint32_t count;
   void *cfg;
   char *name = "/dev/mem";
-  const int freq = 125000000; //124998750; // Hz
-  double trigger_time; 
+  const int freq = 125000000; // Hz
+  int Ncycles; 
 
   if (argc == 3) 
   {
-	log2_trig = atoi(argv[1]);
+	log2_Ncycles = atoi(argv[1]);
 	phase_in = atof(argv[2]);
   }
   else 
   {
-	log2_trig = 0;
+	log2_Ncycles = 1;
 	phase_in = 1.;
   }
   phase_inc = (uint32_t)(2.147482*phase_in);
-
-  trigger_time = 2*(double)(1<<(26-log2_trig))/freq;
+  Ncycles = 1<<log2_Ncycles;
 
   if((fd = open(name, O_RDWR)) < 0)
   {
@@ -40,10 +39,10 @@ int main(int argc, char **argv)
   cfg = mmap(NULL, sysconf(_SC_PAGESIZE), PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0x42000000);
  
 
-  *((uint32_t *)(cfg + 8)) = (0xf & log2_trig) + (phase_inc << 5);   // set trigger and phase_inc
+  *((uint32_t *)(cfg + 8)) = (0x1f & log2_Ncycles) + (phase_inc << 5);   // set log2_Ncycles and phase_inc
 
   count = *((uint32_t *)(cfg + 0));
-  printf("Counts: %5d, trigger time: %5f s, calculated freq: %6.5f Hz\n", count, trigger_time, (double)count/trigger_time);
+  printf("Counts: %5d, cycles: %5d, frequency: %6.5f Hz\n", count, Ncycles, (double)Ncycles/count*freq);
 
 
   munmap(cfg, sysconf(_SC_PAGESIZE));
