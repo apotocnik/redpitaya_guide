@@ -10,7 +10,7 @@ int main(int argc, char **argv)
   int fd;
   int log2_Ncycles;
   uint32_t phase_inc;
-  double phase_in;
+  double phase_in, freq_in;
   uint32_t count;
   void *cfg;
   char *name = "/dev/mem";
@@ -20,14 +20,14 @@ int main(int argc, char **argv)
   if (argc == 3) 
   {
 	log2_Ncycles = atoi(argv[1]);
-	phase_in = atof(argv[2]);
+	freq_in = atof(argv[2]);
   }
   else 
   {
 	log2_Ncycles = 1;
-	phase_in = 1.;
+	freq_in = 1.;
   }
-  phase_inc = (uint32_t)(2.147482*phase_in);
+  phase_inc = (uint32_t)(2.147482*freq_in);
   Ncycles = 1<<log2_Ncycles;
 
   if((fd = open(name, O_RDWR)) < 0)
