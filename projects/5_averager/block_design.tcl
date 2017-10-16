@@ -18,26 +18,27 @@ source projects/$project_name/basic_red_pitaya_bd.tcl
 # IP cores
 
 # GPIO_0
-set_property -dict [list CONFIG.C_TRI_DEFAULT_2 {0xFFFFFF00} CONFIG.C_ALL_INPUTS_2 {0}] [get_bd_cells axi_gpio_0]
+#set_property -dict [list CONFIG.C_TRI_DEFAULT_2 {0xFFFFFF00} CONFIG.C_ALL_INPUTS_2 {0}] [get_bd_cells axi_gpio_0]
+set_property -dict [list CONFIG.C_ALL_INPUTS_2 {1}] [get_bd_cells axi_gpio_0]
 
 # AXI BRAM Reader
 startgroup
-create_bd_cell -type ip -vlnv anton-potocnik:user:axi_bram_reader:1.0 axi_bram_reader_0
+create_bd_cell -type ip -vlnv anton-potocnik:user:axi_bram_reader axi_bram_reader_0
 endgroup
 
 # AXIS Averager
 startgroup
-create_bd_cell -type ip -vlnv anton-potocnik:user:axis_averager:1.0 axis_averager_0
+create_bd_cell -type ip -vlnv anton-potocnik:user:axis_averager axis_averager_0
 endgroup
 
 # BRAM Switch
 startgroup
-create_bd_cell -type ip -vlnv anton-potocnik:user:bram_switch:1.0 bram_switch_0
+create_bd_cell -type ip -vlnv anton-potocnik:user:bram_switch bram_switch_0
 endgroup
 
 # BRAM generator
 startgroup
-create_bd_cell -type ip -vlnv xilinx.com:ip:blk_mem_gen:8.3 blk_mem_gen_0
+create_bd_cell -type ip -vlnv xilinx.com:ip:blk_mem_gen blk_mem_gen_0
 set_property -dict [list CONFIG.Memory_Type {True_Dual_Port_RAM} CONFIG.Enable_32bit_Address {false} CONFIG.Operating_Mode_B {READ_FIRST} CONFIG.Register_PortA_Output_of_Memory_Primitives {false} CONFIG.Register_PortB_Output_of_Memory_Primitives {false} CONFIG.use_bram_block {Stand_Alone} CONFIG.Use_Byte_Write_Enable {false} CONFIG.Byte_Size {8} CONFIG.Enable_B {Always_Enabled} CONFIG.Use_RSTA_Pin {false} CONFIG.Use_RSTB_Pin {false} CONFIG.Port_B_Clock {100} CONFIG.Port_B_Write_Rate {50} CONFIG.Port_B_Enable_Rate {100} CONFIG.Write_Depth_A {1024} CONFIG.Enable_A {Always_Enabled}  CONFIG.Use_RSTB_Pin {false} ] [get_bd_cells blk_mem_gen_0] 
 endgroup
 
@@ -45,37 +46,37 @@ endgroup
 # xlslices
 startgroup
 # slice_reset
-create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 xls_reset
+create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice xls_reset
 set_property -dict [list CONFIG.DIN_TO {0} CONFIG.DIN_FROM {0}] [get_bd_cells xls_reset]
 
 # slice_trigger
-create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 xls_trigger
+create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice xls_trigger
 set_property -dict [list CONFIG.DIN_TO {8} CONFIG.DIN_FROM {15}] [get_bd_cells xls_trigger]
 
 # slice_NSAMPLES
-create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 xls_NSAMPLES
+create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice xls_NSAMPLES
 set_property -dict [list CONFIG.DIN_TO {16} CONFIG.DIN_FROM {23}] [get_bd_cells xls_NSAMPLES]
 
 # slice_NAVERAGES
-create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 xls_NAVERAGES
+create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice xls_NAVERAGES
 set_property -dict [list CONFIG.DIN_TO {24} CONFIG.DIN_FROM {31}] [get_bd_cells xls_NAVERAGES]
 endgroup
 
 
 # Binary Counter - 32bit
 startgroup
-create_bd_cell -type ip -vlnv xilinx.com:ip:c_counter_binary:12.0 c_counter_binary_0
+create_bd_cell -type ip -vlnv xilinx.com:ip:c_counter_binary c_counter_binary_0
 set_property -dict [list CONFIG.Output_Width {32}] [get_bd_cells c_counter_binary_0]
 endgroup
 
 
 # Concatenation for LEDs
 startgroup
-create_bd_cell -type ip -vlnv xilinx.com:ip:xlconcat:2.1 xlconcat_0
+create_bd_cell -type ip -vlnv xilinx.com:ip:xlconcat xlconcat_0
 set_property -dict [list CONFIG.IN1_WIDTH.VALUE_SRC USER CONFIG.IN0_WIDTH.VALUE_SRC USER] [get_bd_cells xlconcat_0]
 set_property -dict [list CONFIG.IN1_WIDTH {7}] [get_bd_cells xlconcat_0]
 
-create_bd_cell -type ip -vlnv xilinx.com:ip:xlconcat:2.1 xlconcat_1
+create_bd_cell -type ip -vlnv xilinx.com:ip:xlconcat xlconcat_1
 set_property -dict [list CONFIG.IN0_WIDTH.VALUE_SRC USER CONFIG.IN1_WIDTH.VALUE_SRC USER] [get_bd_cells xlconcat_1]
 set_property -dict [list CONFIG.IN1_WIDTH {31}] [get_bd_cells xlconcat_1]
 endgroup
@@ -83,14 +84,14 @@ endgroup
 
 # Constant for GPIO Port 2 input
 startgroup
-create_bd_cell -type ip -vlnv xilinx.com:ip:xlconstant:1.1 xlconstant_0
+create_bd_cell -type ip -vlnv xilinx.com:ip:xlconstant xlconstant_0
 set_property -dict [list CONFIG.CONST_WIDTH {31} CONFIG.CONST_VAL {0}] [get_bd_cells xlconstant_0]
 endgroup
 
 
 # Constant for AXIS aresetn
 startgroup
-create_bd_cell -type ip -vlnv xilinx.com:ip:xlconstant:1.1 xlc_reset
+create_bd_cell -type ip -vlnv xilinx.com:ip:xlconstant xlc_reset
 endgroup
 
 
@@ -102,9 +103,9 @@ create_bd_cell -type module -reference signal_split signal_split_0
 
 
 
-# expTwo
-create_bd_cell -type module -reference expTwo expTwo_0
-create_bd_cell -type module -reference expTwo expTwo_1
+# pow2
+create_bd_cell -type module -reference pow2 pow2_0
+create_bd_cell -type module -reference pow2 pow2_1
 
 # selector for the trigger
 create_bd_cell -type module -reference selector selector_0
@@ -124,8 +125,8 @@ connect_bd_intf_net [get_bd_intf_pins axis_averager_0/BRAM_PORTB] [get_bd_intf_p
 connect_bd_intf_net [get_bd_intf_pins axi_bram_reader_0/BRAM_PORTA] [get_bd_intf_pins bram_switch_0/BRAM_PORTA]
 connect_bd_net [get_bd_pins axis_averager_0/trig] [get_bd_pins selector_0/S]
 connect_bd_net [get_bd_pins axis_averager_0/aclk] [get_bd_pins axis_red_pitaya_adc_0/adc_clk]
-connect_bd_net [get_bd_pins axis_averager_0/nsamples] [get_bd_pins expTwo_0/N]
-connect_bd_net [get_bd_pins axis_averager_0/naverages] [get_bd_pins expTwo_1/N]
+connect_bd_net [get_bd_pins axis_averager_0/nsamples] [get_bd_pins pow2_0/N]
+connect_bd_net [get_bd_pins axis_averager_0/naverages] [get_bd_pins pow2_1/N]
 connect_bd_net [get_bd_pins axis_averager_0/user_reset] [get_bd_pins xls_reset/Dout]
 connect_bd_net [get_bd_pins axis_averager_0/finished] [get_bd_pins xlconcat_0/In0]
 connect_bd_net [get_bd_pins axis_averager_0/averages_out] [get_bd_pins xlconcat_0/In1]
@@ -135,8 +136,8 @@ connect_bd_intf_net [get_bd_intf_pins signal_split_0/M_AXIS_PORT1] [get_bd_intf_
 
 
 # to GPIO
-connect_bd_net [get_bd_pins xls_NAVERAGES/Dout] [get_bd_pins expTwo_1/log2N]
-connect_bd_net [get_bd_pins xls_NSAMPLES/Dout] [get_bd_pins expTwo_0/log2N]
+connect_bd_net [get_bd_pins xls_NAVERAGES/Dout] [get_bd_pins pow2_1/log2N]
+connect_bd_net [get_bd_pins xls_NSAMPLES/Dout] [get_bd_pins pow2_0/log2N]
 #connect_bd_net [get_bd_pins xls_reset/Dout] [get_bd_pins axis_averager_0/reset]
 
 
@@ -177,9 +178,11 @@ group_bd_cells Trigger [get_bd_cells selector_0] [get_bd_cells c_counter_binary_
 
 group_bd_cells GPIO [get_bd_cells xlconcat_1] [get_bd_cells axi_gpio_0] [get_bd_cells xlconstant_0]
 
-group_bd_cells Averager [get_bd_cells xls_NAVERAGES] [get_bd_cells xls_reset] [get_bd_cells axis_averager_0] [get_bd_cells xls_NSAMPLES] [get_bd_cells expTwo_0] [get_bd_cells blk_mem_gen_0] [get_bd_cells bram_switch_0] [get_bd_cells expTwo_1] [get_bd_cells xlc_reset] [get_bd_cells axi_bram_reader_0]
+group_bd_cells Averager [get_bd_cells xls_NAVERAGES] [get_bd_cells xls_reset] [get_bd_cells axis_averager_0] [get_bd_cells xls_NSAMPLES] [get_bd_cells pow2_0] [get_bd_cells blk_mem_gen_0] [get_bd_cells bram_switch_0] [get_bd_cells pow2_1] [get_bd_cells xlc_reset] [get_bd_cells axi_bram_reader_0]
 
 group_bd_cells PS7 [get_bd_cells processing_system7_0] [get_bd_cells rst_ps7_0_125M] [get_bd_cells ps7_0_axi_periph]
+
+group_bd_cells DataAcquisition [get_bd_cells axis_red_pitaya_adc_0] [get_bd_cells signal_split_0]
 
 
 # ====================================================================================

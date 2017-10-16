@@ -23,10 +23,10 @@ set_property -dict [list CONFIG.C_ALL_INPUTS {1} CONFIG.C_ALL_INPUTS_2 {0}] [get
 # xlslices
 startgroup
 # slice_trigger
-create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 xls_log2Ncycles
+create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice xls_log2Ncycles
 set_property -dict [list CONFIG.DIN_TO {0} CONFIG.DIN_FROM {4}] [get_bd_cells xls_log2Ncycles]
 # slice_phase
-create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 xls_phase
+create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice xls_phase
 set_property -dict [list CONFIG.DIN_TO {5} CONFIG.DIN_FROM {31}] [get_bd_cells xls_phase]
 endgroup
 
@@ -34,7 +34,7 @@ endgroup
 
 # Constant for AXIS aresetn
 startgroup
-create_bd_cell -type ip -vlnv xilinx.com:ip:xlconstant:1.1 xlc_reset
+create_bd_cell -type ip -vlnv xilinx.com:ip:xlconstant xlc_reset
 endgroup
 
 # DDS compiler
@@ -42,7 +42,7 @@ set_property -dict [list CONFIG.Parameter_Entry {System_Parameters} CONFIG.Phase
 
 
 # AXIS Constant from Pavel Demin
-create_bd_cell -type ip -vlnv pavel-demin:user:axis_constant:1.0 axis_constant_0
+create_bd_cell -type ip -vlnv pavel-demin:user:axis_constant axis_constant_0
 
 
 # ====================================================================================

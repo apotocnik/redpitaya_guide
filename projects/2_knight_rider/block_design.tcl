@@ -37,33 +37,33 @@ if {[llength $files] > 0} {
 
 # Zynq processing system with RedPitaya specific preset
 startgroup
-create_bd_cell -type ip -vlnv xilinx.com:ip:processing_system7:5.5 processing_system7_0
+create_bd_cell -type ip -vlnv xilinx.com:ip:processing_system7 processing_system7_0
 set_property -dict [list CONFIG.PCW_USE_S_AXI_HP0 {1}] [get_bd_cells processing_system7_0]
 set_property -dict [list CONFIG.PCW_IMPORT_BOARD_PRESET {cfg/red_pitaya.xml}] [get_bd_cells processing_system7_0]
 endgroup
 
 # Buffers for differential IOs
 startgroup
-create_bd_cell -type ip -vlnv xilinx.com:ip:util_ds_buf:2.1 util_ds_buf_0
+create_bd_cell -type ip -vlnv xilinx.com:ip:util_ds_buf util_ds_buf_0
 set_property -dict [list CONFIG.C_SIZE {2}] [get_bd_cells util_ds_buf_0]
 
-create_bd_cell -type ip -vlnv xilinx.com:ip:util_ds_buf:2.1 util_ds_buf_1
+create_bd_cell -type ip -vlnv xilinx.com:ip:util_ds_buf util_ds_buf_1
 set_property -dict [list CONFIG.C_SIZE {2}] [get_bd_cells util_ds_buf_1]
 
-create_bd_cell -type ip -vlnv xilinx.com:ip:util_ds_buf:2.1 util_ds_buf_2
+create_bd_cell -type ip -vlnv xilinx.com:ip:util_ds_buf util_ds_buf_2
 set_property -dict [list CONFIG.C_SIZE {2}] [get_bd_cells util_ds_buf_2]
 set_property -dict [list CONFIG.C_BUF_TYPE {OBUFDS}] [get_bd_cells util_ds_buf_2]
 endgroup
 
 # binary counter
 startgroup
-create_bd_cell -type ip -vlnv xilinx.com:ip:c_counter_binary:12.0 c_counter_binary_0
+create_bd_cell -type ip -vlnv xilinx.com:ip:c_counter_binary c_counter_binary_0
 set_property -dict [list CONFIG.Output_Width {32}] [get_bd_cells c_counter_binary_0]
 endgroup
 
 # slice
 startgroup
-create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 xlslice_0
+create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice xlslice_0
 set_property -dict [list CONFIG.DIN_TO {23} CONFIG.DIN_FROM {23} CONFIG.DIN_WITDH {32} CONFIG.DOUT_WIDTH {1}] [get_bd_cells xlslice_0]
 endgroup
 
@@ -81,7 +81,7 @@ endgroup
 
 # Add vector OR IP to join two knight rider module outputs
 startgroup
-create_bd_cell -type ip -vlnv xilinx.com:ip:util_vector_logic:2.0 util_vector_logic_0
+create_bd_cell -type ip -vlnv xilinx.com:ip:util_vector_logic util_vector_logic_0
 set_property -dict [list CONFIG.C_OPERATION {or} CONFIG.LOGO_FILE {data/sym_orgate.png}] [get_bd_cells util_vector_logic_0]
 endgroup
 
