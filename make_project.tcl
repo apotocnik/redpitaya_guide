@@ -6,7 +6,7 @@
 #
 # Make sure the script is executed from redpitaya_guide/ folder
 #
-# by Anton Potocnik, 02.10.2016 - 27.10.2017
+# by Anton Potocnik, 02.10.2016 - 14.12.2017
 # ==================================================================================================
 
 set project_name "1_led_blink"

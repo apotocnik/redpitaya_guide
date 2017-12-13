@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>5_Averager</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <property name="minimumSize">
@@ -59,7 +59,7 @@
        <item row="1" column="0">
         <widget class="QLabel" name="label_5">
          <property name="text">
-          <string>IP Address:</string>
+          <string>Red Pitaya's IP Address:</string>
          </property>
         </widget>
        </item>
@@ -70,7 +70,7 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="1">
+       <item row="3" column="1">
         <spacer name="verticalSpacer_2">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -83,66 +83,29 @@
          </property>
         </spacer>
        </item>
-       <item row="3" column="0">
+       <item row="4" column="0">
         <widget class="QLabel" name="label_2">
          <property name="text">
-          <string>Log2 Trigger Delay:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="1">
-        <widget class="QSpinBox" name="txtTD">
-         <property name="value">
-          <number>15</number>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="0">
-        <widget class="QLabel" name="label_3">
-         <property name="text">
-          <string>Log2 # of Averages:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="1">
-        <widget class="QSpinBox" name="txtNOA"/>
-       </item>
-       <item row="6" column="1">
-        <widget class="QLabel" name="labNOA">
-         <property name="text">
-          <string>1</string>
+          <string>Trigger rate:
+ f0= 125 MHz</string>
          </property>
         </widget>
        </item>
        <item row="7" column="0">
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>Number of Averages:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="9" column="0">
         <widget class="QLabel" name="label_4">
          <property name="text">
-          <string>Log2 # of Samples:</string>
+          <string>Number of Samples:</string>
          </property>
         </widget>
        </item>
-       <item row="7" column="1">
-        <widget class="QSpinBox" name="txtNOS">
-         <property name="value">
-          <number>10</number>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="0">
-        <widget class="QLabel" name="label_6">
-         <property name="text">
-          <string>(&lt;11)</string>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="1">
-        <widget class="QLabel" name="labNOS">
-         <property name="text">
-          <string>1024</string>
-         </property>
-        </widget>
-       </item>
-       <item row="10" column="1">
+       <item row="12" column="1">
         <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -155,14 +118,14 @@
          </property>
         </spacer>
        </item>
-       <item row="11" column="1">
+       <item row="13" column="1">
         <widget class="QPushButton" name="btnStart">
          <property name="text">
           <string>Start</string>
          </property>
         </widget>
        </item>
-       <item row="12" column="0">
+       <item row="14" column="0">
         <spacer name="verticalSpacer_3">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -178,7 +141,7 @@
          </property>
         </spacer>
        </item>
-       <item row="13" column="0">
+       <item row="15" column="0">
         <widget class="QCheckBox" name="chkScale">
          <property name="text">
           <string>Scale</string>
@@ -191,7 +154,7 @@
          </property>
         </widget>
        </item>
-       <item row="13" column="1">
+       <item row="15" column="1">
         <widget class="QCheckBox" name="chkFFT">
          <property name="text">
           <string>FFT</string>
@@ -201,24 +164,44 @@
          </property>
         </widget>
        </item>
-       <item row="14" column="0">
+       <item row="16" column="0">
         <widget class="QComboBox" name="cbShowComp">
          <property name="modelColumn">
           <number>0</number>
          </property>
         </widget>
        </item>
-       <item row="14" column="1">
+       <item row="16" column="1">
         <widget class="QCheckBox" name="chkLogScale">
          <property name="text">
           <string>Log Scale</string>
          </property>
         </widget>
        </item>
+       <item row="7" column="1">
+        <widget class="QComboBox" name="cbNOA"/>
+       </item>
+       <item row="9" column="1">
+        <widget class="QComboBox" name="cbNOS"/>
+       </item>
+       <item row="4" column="1">
+        <widget class="QComboBox" name="cbTrigger"/>
+       </item>
+       <item row="2" column="1">
+        <widget class="QLineEdit" name="txtPort">
+         <property name="text">
+          <string>1001</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Port Number:</string>
+         </property>
+        </widget>
+       </item>
       </layout>
-      <zorder>txtTD</zorder>
-      <zorder>txtNOA</zorder>
-      <zorder>txtNOS</zorder>
       <zorder>btnStart</zorder>
       <zorder>label_2</zorder>
       <zorder>label_3</zorder>
@@ -230,11 +213,13 @@
       <zorder>verticalSpacer_3</zorder>
       <zorder>chkScale</zorder>
       <zorder>chkFFT</zorder>
-      <zorder>labNOA</zorder>
-      <zorder>labNOS</zorder>
-      <zorder>label_6</zorder>
       <zorder>chkLogScale</zorder>
       <zorder>cbShowComp</zorder>
+      <zorder>cbNOA</zorder>
+      <zorder>cbNOS</zorder>
+      <zorder>cbTrigger</zorder>
+      <zorder>txtPort</zorder>
+      <zorder>label</zorder>
      </widget>
     </item>
    </layout>
