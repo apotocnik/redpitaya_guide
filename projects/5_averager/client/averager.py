@@ -10,15 +10,20 @@
 import sys
 import struct
 import numpy as np
-from PyQt4 import uic # QtCore, QtGui, 
-from PyQt4.QtGui import QApplication, QMessageBox #, QMainWindow
+## PyQt4 implementation
+# from PyQt4 import uic # QtCore, QtGui,   
+# from PyQt4.QtGui import QApplication, QMessageBox #, QMainWindow
+# from PyQt4.QtNetwork import QAbstractSocket, QTcpSocket
+## PyQt5 implementation
+from PyQt5 import uic
+from PyQt5.QtWidgets import QApplication, QMessageBox  
+from PyQt5.QtNetwork import QAbstractSocket, QTcpSocket
 
 import matplotlib
 matplotlib.use('Qt4Agg')
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
-from PyQt4.QtNetwork import QAbstractSocket, QTcpSocket
 
 Ui_Averager, QMainWindow = uic.loadUiType('averager.ui')
 
@@ -102,7 +107,7 @@ class Averager(QMainWindow, Ui_Averager):
     
     def start(self):
         if self.idle:
-            print "connecting ..."
+            print( "connecting ...")
             self.btnStart.setEnabled(False)
             self.socket.connectToHost(self.txtIPA.text(), int(self.txtPort.text()))
         else:
@@ -111,26 +116,26 @@ class Averager(QMainWindow, Ui_Averager):
           self.offset = 0
           self.btnStart.setText('Start')
           self.btnStart.setEnabled(True)
-          print "Disconnected"
+          print( "Disconnected")
     
     
     def set_config(self):
         # Number of Samples
         self.size = int(1<<self.cbNOS.currentIndex())
         self.naverages = (1<<int(self.cbNOA.currentIndex()))
-        print "number of samples = " + str(self.size)
-        print "number of averages = " + str(self.naverages)
-        print "trigger = " + str(self.cbTrigger.currentIndex())
+        print( "number of samples = " + str(self.size))
+        print( "number of averages = " + str(self.naverages))
+        print( "trigger = " + str(self.cbTrigger.currentIndex()))
 
         if self.idle: return
         self.socket.write(struct.pack('<I', 1<<28 | self.cbTrigger.currentIndex()))
         self.socket.write(struct.pack('<I', 2<<28 | self.cbNOS.currentIndex()))
         self.socket.write(struct.pack('<I', 3<<28 | self.cbNOA.currentIndex()))
-        #print "Configuration sent"
+        #print( "Configuration sent")
         
     
     def connected(self):
-        print "Connected"
+        print( "Connected")
         self.idle = False
         self.btnStart.setText('Stop')
         self.btnStart.setEnabled(True)
@@ -140,12 +145,12 @@ class Averager(QMainWindow, Ui_Averager):
 
     def read_data(self):
         size = self.socket.bytesAvailable()
-        print "got  " + str(size) 
+        print( "got  " + str(size) )
         if self.offset + size < 4*self.size:
           self.buffer[self.offset:self.offset + size] = self.socket.read(size)
           self.offset += size
         else:
-          #print "have all the data"
+          #print( "have all the data")
           self.buffer[self.offset:4*self.size] = self.socket.read(4*self.size - self.offset)
           self.offset = 0
           self.haveData = True
@@ -155,7 +160,7 @@ class Averager(QMainWindow, Ui_Averager):
           self.offset = 0
           self.btnStart.setText('Start')
           self.btnStart.setEnabled(True)
-          print "Disconnected"
+          print( "Disconnected")
           
           
           
@@ -164,8 +169,12 @@ class Averager(QMainWindow, Ui_Averager):
             
         # reset toolbar
         self.toolbar.home()
-        self.toolbar._views.clear()
-        self.toolbar._positions.clear()
+        ## PyQt4 implementation
+ #       self.toolbar._views.clear()  
+ #       self.toolbar._positions.clear()
+        ## PyQt5 implementation
+        self.toolbar.update()
+        
         # reset plot
         self.axes.clear()
         self.axes.grid()
@@ -217,7 +226,7 @@ class Averager(QMainWindow, Ui_Averager):
         else:
             ylab = ylab + ' (V)'
             
-        #print str(y_data[N/2-1]) + " " + str(y_data[N/2]) + " " + str(y_data[N/2+1])
+        #print( str(y_data[N/2-1]) + " " + str(y_data[N/2]) + " " + str(y_data[N/2+1]))
         self.curve = self.axes.plot(x_data, y_data)
         #x1, x2, y1, y2 = self.axes.axis()
         # set y axis limits
@@ -240,7 +249,7 @@ class Averager(QMainWindow, Ui_Averager):
     def start_measurement(self):
         if self.idle: return
         self.socket.write(struct.pack('<I', 0<<28))
-        #print "Measurement Started"
+        #print( "Measurement Started")
 
     
     
@@ -248,7 +257,6 @@ app = QApplication(sys.argv)
 window = Averager()
 window.show()
 sys.exit(app.exec_())
-
 
 
         
